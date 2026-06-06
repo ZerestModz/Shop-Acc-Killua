@@ -7,47 +7,50 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; }
+        body { background: #0b0e14; color: #e2e8f0; font-family: sans-serif; }
+        .glass-card { background: #161c27; border-radius: 20px; border: 1px solid #2d3748; }
         .tab-content { display: none; }
         .active { display: block; }
-        .card { background: #1e293b; border-radius: 20px; }
+        
+        /* Hiệu ứng bấm nút */
+        .btn-press { transition: all 0.2s ease; }
+        .btn-press:active { transform: scale(0.95); opacity: 0.8; }
     </style>
 </head>
 <body class="pb-24">
 
     <div id="tab1" class="tab-content active p-4">
         <h2 class="text-lg font-bold mb-4">🛒 Danh sách Acc</h2>
-        <div class="card p-4 border border-slate-700 flex justify-between items-center mb-4">
+        <div class="glass-card p-4 flex justify-between items-center btn-press">
             <div>
-                <p class="font-bold">Acc Rank Chiến Thần</p>
-                <p class="text-sm text-green-400">50.000đ</p>
+                <p class="font-bold text-lg">Acc Level 30</p>
+                <p class="text-sm text-yellow-500 font-bold">Rank Huyền Thoại</p>
             </div>
-            <button class="bg-blue-600 px-4 py-2 rounded-xl text-sm font-bold">Chọn</button>
+            <p class="text-xl font-bold">50.000đ</p>
         </div>
     </div>
 
     <div id="tab2" class="tab-content p-4">
-        <h2 class="text-lg font-bold mb-4">💰 Nạp tiền MoMo</h2>
-        <div class="card p-5 border border-slate-700">
-            <div class="space-y-2 text-sm text-slate-300 mb-4">
-                <p>Số TK: <b class="text-white">0901371650</b></p>
-                <p>Chủ TK: <b class="text-white">DUONG THI TU TRINH</b></p>
-                <p>Nội dung: <b class="text-yellow-400">NAP[USER_ID]</b></p>
-            </div>
-            <input type="number" id="amount" placeholder="Nhập số tiền..." class="w-full bg-slate-900 p-3 rounded-xl border border-slate-700 mb-4">
-            <button onclick="generateQR()" class="w-full bg-blue-600 py-3 rounded-xl font-bold">Tạo mã nạp</button>
-        </div>
-
-        <div id="qr-result" class="mt-6 card p-5 border border-slate-700 text-center hidden">
-            <img id="qr-img" src="" class="mx-auto w-56 h-56 rounded-xl mb-4 bg-white p-1">
-            <button onclick="cancelOrder()" class="w-full bg-red-600 py-2 rounded-xl font-bold">Hủy đơn</button>
+        <h2 class="text-lg font-bold mb-4">💰 Nạp tiền</h2>
+        <div class="glass-card p-5">
+            <input type="number" id="amount" placeholder="Nhập số tiền..." class="w-full bg-slate-950 p-4 rounded-xl border border-slate-700 text-white mb-4">
+            <button onclick="generateQR()" class="btn-press w-full bg-blue-600 py-4 rounded-xl font-bold text-lg shadow-lg shadow-blue-900/20">Tạo đơn nạp</button>
         </div>
     </div>
 
-    <div class="fixed bottom-0 w-full bg-[#1e293b] border-t border-slate-700 flex justify-around p-4 text-xs font-bold text-slate-400">
-        <button onclick="showTab(1)">🛒 Shop</button>
-        <button onclick="showTab(2)" class="text-blue-500">💰 Nạp</button>
-        <button onclick="showTab(3)">📋 Lịch sử</button>
+    <div id="qr-modal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="glass-card p-6 w-full max-w-sm">
+            <img id="qr-img" src="" class="w-full bg-white p-2 rounded-xl mb-4">
+            <div class="text-sm text-center mb-6">
+                <p>Nội dung: <span class="text-yellow-400 font-bold" id="nap-code">NAP...</span></p>
+            </div>
+            <button onclick="closeModal()" class="btn-press w-full bg-red-600 py-3 rounded-xl font-bold">Đóng</button>
+        </div>
+    </div>
+
+    <div class="fixed bottom-0 w-full bg-[#161c27] border-t border-slate-700 flex justify-around p-4">
+        <button onclick="showTab(1)" class="btn-press flex flex-col items-center text-xs">🛒 Shop</button>
+        <button onclick="showTab(2)" class="btn-press flex flex-col items-center text-blue-500 text-xs">💰 Nạp</button>
     </div>
 
     <script>
@@ -59,16 +62,13 @@
         function generateQR() {
             let amount = document.getElementById('amount').value;
             if(amount < 10000) return alert("Tối thiểu 10.000đ");
-            let url = "https://img.vietqr.io/image/MOMO-0901371650-compact2.png?amount=" + amount + "&addInfo=NAP" + Math.floor(Math.random()*1000000);
-            document.getElementById('qr-img').src = url;
-            document.getElementById('qr-result').classList.remove('hidden');
+            let code = "NAP" + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('nap-code').innerText = code;
+            document.getElementById('qr-img').src = "https://img.vietqr.io/image/MB-0901371650-compact2.png?amount=" + amount + "&addInfo=" + code;
+            document.getElementById('qr-modal').classList.remove('hidden');
         }
 
-        function cancelOrder() {
-            document.getElementById('qr-result').classList.add('hidden');
-            alert("Đã hủy đơn nạp!");
-        }
-
+        function closeModal() { document.getElementById('qr-modal').classList.add('hidden'); }
         window.Telegram.WebApp.expand();
     </script>
 </body>
